@@ -28,6 +28,7 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 	* Init function
 	*/
 	protected function init() {
+		$formModel = $this->getModel();
 		$opts = new StdClass;
 
 		//get base uri
@@ -37,6 +38,7 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 		$opts->elements = $this->processElements($this->model->elements["0.1"]);
 		$opts->elementsNames = $this->processElementsNames($this->model->elements["0.1"]);
 		$opts->listUrl = $this->createListLink($this->getModel()->getId());
+		$opts->listUrlAdd = $this->createListLinkAdd();
 		
 		// Load the JS code and pass the opts
 		$this->loadJS($opts);
@@ -98,6 +100,11 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 	protected function createListLink($listId) {
 		$baseUri = JURI::base();
 		return $baseUri ."administrator/index.php?option=com_fabrik&view=list&layout=edit&id=". $listId . "&modalView=1";
+	}
+
+	protected function createListLinkAdd() {
+		$baseUri = JURI::base();
+		return $baseUri ."administrator/index.php?option=com_fabrik&view=element&layout=edit";
 	}
 
 	/*

@@ -11,9 +11,6 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
             // Init options
 			this.options = options;
 
-			console.log(options);
-
-
 			const heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
 			const btnGroup = jQuery(heading).find('.btn-group')[0];
 
@@ -28,7 +25,7 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 					});
 				});
 			} else {
-				console.log("Login to see front end admin options");
+				//console.log("Login to see front end admin options");
 			} 
 		},
 
@@ -67,6 +64,25 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			const btnGroup = jQuery(heading).find('.btn-group')[0];
 			var JBtnGroup = jQuery(btnGroup);
 			var editListButton = jQuery('<button type="button">Editar Lista</button>');
+			var addElementButton = jQuery('<button type="button">Adicionar Elemento</button>');
+			
+			addElementButton.on('click', () => {
+				window.open(self.options.listUrlAdd, '_blank', menubar=false);
+			});
+			
+			addElementButton.css({
+				'border': 'medium none',
+				'display': 'block',
+				'min-height': '30px',
+				'padding': '0 12px',
+				'background-color': '#207CCD',
+				'font-size': '12px',
+				'width': '100%',
+				'text-align': 'center',
+				'margin-top': '10px',
+				'color': '#FFF',
+			});
+
 			editListButton.on('click', () => {
 				window.open(self.options.listUrl,'_blank', menubar=false);
 			});
@@ -98,7 +114,6 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			});
 			
 			button.on('click', function () {
-				console.log(jQuery(div).css('display') == 'none');
 				if(jQuery(div).css('display') == 'none') {
 					jQuery(div).css({'display': 'block' });
 				} else {
@@ -131,12 +146,10 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 
 
 			list.append(editListButton);
+			list.append(addElementButton);
 
-
-			console.log(list);
 			div.append(list);
 			JBtnGroup.append(div);
-			console.log(JBtnGroup);
 		},
 		
 
