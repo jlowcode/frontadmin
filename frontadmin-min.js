@@ -67,22 +67,12 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 		// Create a button of an element edit link
 		// @link link of the button
 		createButton: function(link, id, baseUri) {
-			// var button = document.createElement("i");
-			// button.className = "icon-edit";
-			// button.style = "cursor: pointer; ";
-			// button.addEventListener ("click", function() {
-			// 	const url = `${baseUri}administrator/index.php?option=com_fabrik&view=element&layout=edit`;
-			// 	document.querySelector('#iframe-url').src = url;
-			// });
-			
-			// var link = document.createElement("a");
-			// link.rel = "modal";
-			// link.href = "#janela";
-			// link.appendChild(button);
-			
-			// return link;
 
-			var button = jQuery('<a rel="modal" href="#janela"><button id="'+id+'" class="elementAdminButton" style="background-color: transparent;" type="button"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg></button></a>');
+			// var button = jQuery('<a rel="modal" href="#janela"><button id="'+id+'" class="elementAdminButton" style="background-color: transparent;" type="button"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg></button></a>');
+			var button = jQuery(`
+			<a rel="modal" data-cooltipz-dir="right" href="#janela" class="tooltiptext2">
+				<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg></button>
+			</a>`);
 			button.on('click', () => {
 				// window.open(link,'_blank', menubar=false);
 
@@ -99,11 +89,11 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			for (var key in links) {
 				if(links.hasOwnProperty(key)) {
 					var element = jQuery('th.'+key);
+					element.addClass("tooltip2"); //Adiciona class do tooltip
 					var button  = this.createButton(links[key], key+"_admin_button", baseUri);
-					// button.hide();
 					element.append(button);
 					element.css({
-						"min-width": "120px"
+						"min-width": "120px;"
 					});
 					
 				}
@@ -218,6 +208,41 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 				.fechar{				
 					display: block;
 					text-align: right;
+				}
+
+				.tooltip2 {
+					position: relative;
+					border-bottom: 1px dotted black;
+					cursor: pointer;
+				}
+
+				.tooltip2 .tooltiptext2 {
+					visibility: hidden;
+					background-color: #b5b5b5;
+					color: #fff;
+					width: 50px;
+					text-align: center;
+					padding: 5px 16px;
+					border-radius: 6px;
+					position: absolute;
+					z-index: 1;
+					margin: -5px 0 0 10px;
+					height: 27px;
+				}
+
+				.tooltip2 .tooltiptext2::after {
+					content: "";
+					position: absolute;
+					top: 50%;
+					right: 100%;
+					margin-top: -5px;
+					border-width: 5px;
+					border-style: solid;
+					border-color: transparent #b5b5b5 transparent transparent;
+				  }
+
+				.tooltip2:hover .tooltiptext2 {
+					visibility: visible;
 				}
 			</style>
 			<!-- <a href="#janela" rel="Modal">Abrir Janela Modal</a> -->
