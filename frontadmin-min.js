@@ -13,12 +13,15 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			const { baseUri } = options;
 
 			const heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
-			const btnGroup = jQuery(heading).find('.btn-group')[0];
+			const btnGroup = options.actionMethod == 'inline' ? jQuery(heading).find('.btn-group')[0] : jQuery(heading).find('.dropdown-menu')[0];
 
 			if(btnGroup) {
 				// adicionando o html do modal na página
 				const form = document.querySelector('.fabrikForm');
-				form.innerHTML += this.htmlModal();
+				//form.innerHTML += this.htmlModal();
+				var modalContent = document.createElement('div');
+				modalContent.innerHTML = this.htmlModal();
+				form.appendChild(modalContent);
 
 				this.setButtons(options.elements, baseUri);
 				this.setActionPanel(options.elements);
@@ -30,7 +33,7 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 					});
 				});
 			} else {
-				console.log("Login to see front end admin options");
+				throw new Error('Login to see front end admin options');
 			}
 			
 			// JQuery responsável por montar o modal na tela
@@ -67,17 +70,8 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 		// Create a button of an element edit link
 		// @link link of the button
 		createButton: function(link, id, baseUri) {
-
-			// var button = jQuery('<a rel="modal" href="#janela"><button id="'+id+'" class="elementAdminButton" style="background-color: transparent;" type="button"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg></button></a>');
-			var button = jQuery(`
-			<a rel="modal" data-cooltipz-dir="right" href="#janela" class="tooltiptext2">
-				<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg></button>
-			</a>`);
+			var button = jQuery('<a rel="modal" data-cooltipz-dir="right" href="#janela" class="tooltiptext2">' + this.options.images.edit +'</a>');
 			button.on('click', () => {
-				// window.open(link,'_blank', menubar=false);
-
-				// const url = `${baseUri}administrator/index.php?option=com_fabrik&view=element&layout=edit`;
-				console.log(link)
 				document.querySelector('#iframe-url').src = link;
 			});
 			return button;
@@ -101,45 +95,53 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 		},
 
 		setActionPanel: function (links) {
-			var self = this;
+			if(this.options.actionMethod == 'inline') {
+				this.setActionPanelInline(links);
+			} else if (this.options.actionMethod == 'dropdown') {
+				this.setActionPanelDropdown(links);
+			} else {
+				throw new Error("Display of invalid buttons in list configuration");
+				//throw new Error(Joomla.JText._("PLG_FRONT_ADMIN_ACTION_METHOD_ERROR"));
+			}
+		},
 
-			const button = jQuery('<a class="btn fabrik_view fabrik__rowlink btn-default"><i data-isicon="true" class="icon-play"></i> <span class="hidden">Admin</span></a>');
-			const heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
-			const btnGroup = jQuery(heading).find('.btn-group')[0];
+		setActionPanelInline: function (links) {
+			var self = this;
+			var button = jQuery('<a class="btn fabrik_view fabrik__rowlink btn-default"><span>' + this.options.images.admin + '</span><span class="hidden">Admin</span></a>');
+			var heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
+			var btnGroup = jQuery(heading).find('.btn-group')[0];
 			var JBtnGroup = jQuery(btnGroup);
-			var editListButton = jQuery('<button type="button">Editar Lista</button>');
+			var editListButton = jQuery('<li><button type="button">Editar Lista</button></li>');
+			
 			editListButton.on('click', () => {
-				window.open(self.options.listUrl,'_blank', menubar=false);
+				window.open(self.options.listUrl, '_blank', menubar=false);
 			});
 			
-			editListButton.css({
-				'border': 'medium none',
-				'display': 'inline-block',
+			editListButton.find('button').css({
 				'min-height': '30px',
-				'padding': '0 12px',
-				'background-color': '#207CCD',
 				'font-size': '12px',
 				'width': '100%',
-				'text-align': 'center',
-				'margin-top': '10px',
-				'color': '#FFF',
+				'border-radius': '12px',
+				'color': '#fff',
+				'background-color': '#003EA1',
 			});
 
 			var div = jQuery("<div></div>");
 			div.css({
-				'font-size': '12px !important',
+				'font-size': '12px',
 				'position': 'absolute',
 				'z-index': 100,
 				'background-color' : "#FFF",
 				'display': 'none',
-				'right' : '20px',
+				'right' : '50%',
 				'padding' : '10px',
-				'border': '0.5px solid',
+				'border': '2px solid #eee',
 				'border-radius': '4px',
+				'text-align': 'left',
+				'width': '150px',
 			});
 			
 			button.on('click', function () {
-				console.log(jQuery(div).css('display') == 'none');
 				if(jQuery(div).css('display') == 'none') {
 					jQuery(div).css({'display': 'block' });
 				} else {
@@ -148,21 +150,69 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 				
 			});
 
-
 			JBtnGroup.append(button);
 
-			var list = jQuery('<ul></ul>');
-
 			jQuery.each(links, function( index, value ) {
-				var li = jQuery('<li style="font-size: 12px !important"></li>')
-					.css({'font-size': '12px !important'})
-					.appendTo(list);
+				var li = jQuery('<li style="font-size: 12px"></li>')
+					.css({'font-size': '12px'})
+					.appendTo(div);
 				var aaa = jQuery('<a/>')
-					.text(self.options.elementsNames[index])
+					.text('- ' + self.options.elementsNames[index])
 					.css({
 						'cursor': 'pointer',
-						'text-decoration': 'underline',
-						'color' : '#000 !important',
+						'padding-left': '10px',
+					})
+					.appendTo(li);
+				aaa.on('click', () => {
+					window.open(value, '_blank', menubar=false);
+				});
+			});
+
+			div.append(editListButton);
+			JBtnGroup.append(div);
+		},
+
+		setActionPanelDropdown: function (links) {
+			var self = this;
+
+			var button = jQuery('<li class="nav-link"><a title="Admin"><span>' + this.options.images.admin +'</span> Admin</a></li>');
+			var heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
+			var btnGroup = jQuery(heading).find('.dropdown-menu')[0];
+			var JBtnGroup = jQuery(btnGroup);
+			var editListButton = jQuery('<li class="subMenuAdmin" style="display: none; padding: 0px 10px;"><button type="button">Editar Lista</button></li>');
+			
+			editListButton.on('click', () => {
+				window.open(self.options.listUrl,'_blank', menubar=false);
+			});
+			
+			editListButton.find('button').css({
+				'min-height': '30px',
+				'font-size': '12px',
+				'width': '100%',
+				'border-radius': '12px',
+				'color': '#fff',
+				'background-color': '#003EA1',
+			});
+
+			button.on('click', function () {
+				jQuery.each(jQuery(this).parent().find('.subMenuAdmin'), function () {
+					if(jQuery(this).css('display') == 'none') {
+						jQuery(this).css({'display': 'block' });
+					} else {
+						jQuery(this).css({'display': 'none' });
+					}
+				});
+			});
+
+			jQuery.each(links, function(index, value) {
+				var li = jQuery('<li style="font-size: 12px; display: none;" class="subMenuAdmin"></li>')
+					.css({'font-size': '12px'})
+					.appendTo(button);
+				var aaa = jQuery('<a/>')
+					.text('- ' + self.options.elementsNames[index])
+					.css({
+						'cursor': 'pointer',
+						'padding-left': '10px',
 					})
 					.appendTo(li);
 				aaa.on('click', () => {
@@ -170,14 +220,8 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 				});
 			});
 
-
-			list.append(editListButton);
-
-
-			console.log(list);
-			div.append(list);
-			JBtnGroup.append(div);
-			console.log(JBtnGroup);
+			button.append(editListButton);
+			JBtnGroup.append(button);
 		},
 
 		htmlModal: function() {
@@ -218,28 +262,12 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 
 				.tooltip2 .tooltiptext2 {
 					visibility: hidden;
-					background-color: #b5b5b5;
+					background-color: #ccc;
 					color: #fff;
-					width: 50px;
 					text-align: center;
-					padding: 5px 16px;
+					padding: 5px;
 					border-radius: 6px;
-					position: absolute;
-					z-index: 1;
-					margin: -5px 0 0 10px;
-					height: 27px;
 				}
-
-				.tooltip2 .tooltiptext2::after {
-					content: "";
-					position: absolute;
-					top: 50%;
-					right: 100%;
-					margin-top: -5px;
-					border-width: 5px;
-					border-style: solid;
-					border-color: transparent #b5b5b5 transparent transparent;
-				  }
 
 				.tooltip2:hover .tooltiptext2 {
 					visibility: visible;
@@ -248,7 +276,7 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			<!-- <a href="#janela" rel="Modal">Abrir Janela Modal</a> -->
 			<div class="window" id="janela">
 				<a href="#" class="fechar" style="margin-right:10px; ">X Fechar</a>
-				<iframe id="iframe-url" height="100%" width="100%" src="#" title="W3Schools Free Online Web Tutorials"></iframe>
+				<iframe id="iframe-url" height="100%" width="100%" src="#"></iframe>
 			</div>
 			<div id="mascara"></div>
 			`

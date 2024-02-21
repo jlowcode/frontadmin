@@ -15,5 +15,6 @@
 		<filename>frontadmin.js</filename>
 		<filename>frontadmin-min.js</filename>
 		<folder>language</folder>
+		<folder>forms</folder>
 	</files>
 </extension>

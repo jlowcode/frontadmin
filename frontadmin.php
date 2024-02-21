@@ -11,6 +11,9 @@
 // No direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
 // Require the abstract plugin class
 require_once COM_FABRIK_FRONTEND . '/models/plugin-list.php';
 
@@ -23,24 +26,24 @@ require_once COM_FABRIK_FRONTEND . '/models/plugin-list.php';
  */
 
 class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
-
-		/*
+	private $images;
+	
+	/*
 	* Init function
 	*/
 	protected function init() {
+		$this->jsScriptTranslation();
 		$opts = new StdClass;
 
-		//get base uri
-		// $opts->baseUri = "http://" . $_SERVER['SERVER_NAME'];
 		$opts->baseUri = JURI::base();
-		
-		$opts->elements = $this->processElements($this->model->elements["0.1"]);
-		$opts->elementsNames = $this->processElementsNames($this->model->elements["0.1"]);
+		$opts->elements = $this->processElements($this->model->getElements(true));
+		$opts->elementsNames = $this->processElementsNames($this->model->getElements(true));
 		$opts->listUrl = $this->createListLink($this->getModel()->getId());
-		
+		$opts->actionMethod = $this->model->actionMethod();
+		$opts->images = $this->getImages();
+
 		// Load the JS code and pass the opts
 		$this->loadJS($opts);
-
 	}
 
 	/*
@@ -51,7 +54,6 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 		$jsFiles = array();
 		$jsFiles['Fabrik'] = 'media/com_fabrik/js/fabrik.js';
 		$jsFiles['FabrikFrontAdmin'] = '/plugins/fabrik_list/frontadmin/frontadmin.js';
-		// $script = "var workflow = new FabrikAction($options);";
 		$script = "var fabrikFrontAdmin = new FabrikFrontAdmin($optsJson);";
 		FabrikHelperHTML::script($jsFiles, $script);
 	}
@@ -60,7 +62,6 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 		$processedElements = new stdClass;
 		foreach($elements as $key => $value) {
 			$fullElementName = $this->processFullElementName($key);
-			// $processedElements->$fullElementName = $value->element->id;
 			$processedElements->$fullElementName = $this->createLink($value->element->id);	
 		}
 		return $processedElements;
@@ -105,6 +106,26 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 	* Used to trigger the init function
 	*/
 	public function onLoadData(&$args) {
+		$this->setImages();
 		$this->init();
 	}
+
+	public function setImages() {
+		$this->images['admin'] = FabrikHelperHTML::image('admin.png', 'list');
+		$this->images['edit'] = FabrikHelperHTML::image('edit.png', 'list');
+	}
+
+	public function getImages() {
+		return $this->images;
+	}
+
+	/**
+     * Function sends message texts to javascript file
+     *
+     * @since version
+     */
+    function jsScriptTranslation()
+    {
+        Text::script('PLG_FRONT_ADMIN_ACTION_METHOD_ERROR');
+    }
 }
