@@ -6,7 +6,8 @@
  */
 define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 	var FbListFrontAdmin = new Class({
-		
+		Extends: FbListPlugin,
+
 		initialize: function (options) { 
             // Init options
 			this.options = options;
@@ -14,11 +15,11 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 
 			const heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
 			const btnGroup = options.actionMethod == 'inline' ? jQuery(heading).find('.btn-group')[0] : jQuery(heading).find('.dropdown-menu')[0];
-
+			
 			if(btnGroup) {
-				// adicionando o html do modal na página
+				// Adicionando o html do modal na página
 				const form = document.querySelector('.fabrikForm');
-				//form.innerHTML += this.htmlModal();
+
 				var modalContent = document.createElement('div');
 				modalContent.innerHTML = this.htmlModal();
 				form.appendChild(modalContent);
@@ -33,7 +34,7 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 					});
 				});
 			} else {
-				throw new Error('Login to see front end admin options');
+				return;
 			}
 			
 			// JQuery responsável por montar o modal na tela
@@ -100,8 +101,7 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			} else if (this.options.actionMethod == 'dropdown') {
 				this.setActionPanelDropdown(links);
 			} else {
-				throw new Error("Display of invalid buttons in list configuration");
-				//throw new Error(Joomla.JText._("PLG_FRONT_ADMIN_ACTION_METHOD_ERROR"));
+				throw new Error(Joomla.JText._("PLG_FRONT_ADMIN_ACTION_METHOD_ERROR"));
 			}
 		},
 

@@ -28,6 +28,10 @@ require_once COM_FABRIK_FRONTEND . '/models/plugin-list.php';
 class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 	private $images;
 	
+	function __construct(&$subject, $config) {
+		parent::__construct($subject, $config);
+	}
+
 	/*
 	* Init function
 	*/
