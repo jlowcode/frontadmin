@@ -10,11 +10,24 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 
 		initialize: function (options) { 
             // Init options
+			self = this;
 			this.options = options;
 			const { baseUri } = options;
 
+			this.setUpButtonsPainel(baseUri);
+
+			Fabrik.addEvent('fabrik.list.submit.ajax.complete', function () {
+				self.setUpButtonsPainel(baseUri);
+			});
+		},
+
+		/**
+		 * Function to show the buttons from painel
+		 * 
+		 */
+		setUpButtonsPainel: function (baseUri) {
 			const heading = jQuery('th.heading.fabrik_ordercell.fabrik_actions')[0];
-			const btnGroup = options.actionMethod == 'inline' ? jQuery(heading).find('.btn-group')[0] : jQuery(heading).find('.dropdown-menu')[0];
+			const btnGroup = this.options.actionMethod == 'inline' ? jQuery(heading).find('.btn-group')[0] : jQuery(heading).find('.dropdown-menu')[0];
 			
 			if(btnGroup) {
 				// Adicionando o html do modal na página
@@ -24,8 +37,8 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 				modalContent.innerHTML = this.htmlModal();
 				form.appendChild(modalContent);
 
-				this.setButtons(options.elements, baseUri);
-				this.setActionPanel(options.elements);
+				this.setButtons(this.options.elements, baseUri);
+				this.setActionPanel(this.options.elements);
 				jQuery(document).ready(function () {
 					jQuery(document).on('mouseenter', '.heading.fabrik_ordercell', function () {
 						jQuery(this).find(":button.elementAdminButton").show();
@@ -84,13 +97,14 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 			for (var key in links) {
 				if(links.hasOwnProperty(key)) {
 					var element = jQuery('th.'+key);
-					element.addClass("tooltip2"); //Adiciona class do tooltip
-					var button  = this.createButton(links[key], key+"_admin_button", baseUri);
-					element.append(button);
-					element.css({
-						"min-width": "120px;"
-					});
-					
+					if(element.find('.tooltiptext2').length == 0) {
+						element.addClass("tooltip2"); //Adiciona class do tooltip
+						var button  = this.createButton(links[key], key+"_admin_button", baseUri);
+						element.append(button);
+						element.css({
+							"min-width": "120px;"
+						});
+					}
 				}
 			}
 		},
