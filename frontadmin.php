@@ -45,10 +45,25 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 		$opts->listUrl = $this->createListLink($this->getModel()->getId());
 		$opts->actionMethod = $this->model->actionMethod();
 		$opts->images = $this->getImages();
+		$this->opts = json_encode($opts);
 
 		// Load the JS code and pass the opts
 		$this->loadJS($opts);
 	}
+
+	public function onloadJavascriptInstance($args)
+    {
+		parent::onLoadJavascriptInstance($args);
+
+        $this->jsInstance = "new FbListFrontadmin({$this->opts})";
+
+        return true;
+    }
+
+    public function loadJavascriptClassName_result()
+    {
+        return 'FbListFrontadmin';
+    }
 
 	/*
 	* Function to load the javascript code for the plugin
@@ -59,7 +74,7 @@ class PlgFabrik_ListFrontAdmin extends PlgFabrik_List {
 		$jsFiles['Fabrik'] = 'media/com_fabrik/js/fabrik.js';
 		$jsFiles['FabrikFrontAdmin'] = '/plugins/fabrik_list/frontadmin/frontadmin.js';
 		$script = "var fabrikFrontAdmin = new FabrikFrontAdmin($optsJson);";
-		FabrikHelperHTML::script($jsFiles, $script);
+		//FabrikHelperHTML::script($jsFiles, $script);
 	}
 
 	protected function processElements($elements) {

@@ -5,10 +5,10 @@
  * @license  : GNU/GPL http                         :                              //www.gnu.org/copyleft/gpl.html
  */
 define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
-	var FbListFrontAdmin = new Class({
+	var FbListFrontadmin = new Class({
 		Extends: FbListPlugin,
 
-		initialize: function (options) { 
+		initialize: function (options) {
             // Init options
 			self = this;
 			this.options = options;
@@ -307,5 +307,5 @@ define(['jquery', 'fab/list-plugin'], function (jQuery, FbListPlugin) {
 		
 	});
 
-	return FbListFrontAdmin;
+	return FbListFrontadmin;
 });
